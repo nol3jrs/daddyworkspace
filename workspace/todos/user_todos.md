@@ -2,9 +2,10 @@
 ## High Priority (Core Alignment & Efficiency)
 - [ ] Share an example n8n workflow JSON from your Railway instance (paste here or upload) to prototype Daddy Agent delegation.
 - [ ] Define Daddy Agent's core delegation rules in requirements/agent_specific/daddy_agent_reqs.md (e.g., route QoL queries to sub-agents like CFO for budgets or datagent for personal todos).
-- [ ] Implement basic Python boilerplate in agents/daddy_agent/main.py for task routing (use LangChain for chains; test with sample input like "Manage my daily todos").
+- [x] Implement basic Python boilerplate in agents/daddy_agent/main.py for task routing (use LangChain for chains; test with sample input like "Manage my daily todos").
 - [ ] Integrate voice prototype: Extend utils/voice_io.py with speechrecognition/gtts, linking to prototypes/grok_voice_interaction_html.html for hands-free QoL input.
 - [ ] Review behavioral_statement.md for any tweaks to ensure QoL focus (e.g., add rule for datagent handling life todos separately from project ones).
+- [ ] Test fallback to Telegram/n8n with real creds.
 
 ## Medium Priority (Beneficial Enhancements & Optimization)
 - [ ] Populate qol_domains/ with initial JSONs (e.g., health.json: {"ideas": ["Fitness tracking workflow", "Voice reminders via datagent"]} ) to map "endless possibilities."
