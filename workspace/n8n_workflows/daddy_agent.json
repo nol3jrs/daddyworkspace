@@ -1,0 +1,282 @@
+{
+  "name": "DaddyAgent",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1536,
+        -48
+      ],
+      "id": "fc35272d-309a-4213-bde5-d9013f7e727f",
+      "name": "Telegram Trigger",
+      "webhookId": "16d64522-2814-4074-9b7c-b19052d53b40",
+      "alwaysOutputData": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "VeWEKodxZWPDoKiQ",
+          "name": "Telegram account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT CONCAT(role, ': ', content) AS line FROM core_memory ORDER BY timestamp ASC LIMIT 5",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -1104,
+        -128
+      ],
+      "id": "59c4eb7b-8238-45cb-a773-734ca5027ed2",
+      "name": "Postgress Memory Loader",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "6P0ERsVEGvjeC73P",
+          "name": "Postgres account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "06303525-b6ba-426c-b740-c0b22b876344",
+              "name": "Original Message",
+              "value": "={{ $('Telegram Trigger').item.json.message.text }}",
+              "type": "string"
+            },
+            {
+              "id": "397b5473-8a36-4b6c-8906-9dba46184084",
+              "name": "system_prompt",
+              "value": "=={{ $input.all().map(item => item.json.line).join('\\n') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -896,
+        -224
+      ],
+      "id": "64733bbb-5fa1-4b3c-ac73-2d648732e602",
+      "name": "Memory Rebuild",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=={{ $('Telegram Trigger').item.json.message.text }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "={{ $('Memory Rebuild').item.json.system_prompt }}"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -576,
+        -352
+      ],
+      "id": "eb794e97-fcd9-4348-8222-5827d997274b",
+      "name": "Basic LLM Chain",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "model": "=grok-4-0709",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatXAiGrok",
+      "typeVersion": 1,
+      "position": [
+        -512,
+        -128
+      ],
+      "id": "9afdf0e7-cbcc-4221-a255-037121fbe54c",
+      "name": "xAI Grok Chat Model",
+      "credentials": {
+        "xAiApi": {
+          "id": "AyY7ypBBubODV5YZ",
+          "name": "xAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -224,
+        -352
+      ],
+      "id": "d1a20a7e-3d8c-495a-b24e-b1b51a7321e8",
+      "name": "Send a text message",
+      "webhookId": "b5ce390b-0482-43a5-8c0b-a673edbcbd4a",
+      "alwaysOutputData": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "VeWEKodxZWPDoKiQ",
+          "name": "Telegram account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO core_memory (role, content) VALUES ('user', '{{ $('Telegram Trigger').item.json.message.text }}');",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -1056,
+        160
+      ],
+      "id": "5d907eaf-60e2-4f03-b192-04303238efd5",
+      "name": "Postgres - User Insert",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "6P0ERsVEGvjeC73P",
+          "name": "Postgres account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO core_memory (role, content) VALUES ('assistant', '{{ $json.text }}');",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -224,
+        -160
+      ],
+      "id": "51e87e5a-7862-4282-9fb0-490891331620",
+      "name": "Postgres - Assistant Insert",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "6P0ERsVEGvjeC73P",
+          "name": "Postgres account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "xAI Grok Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Postgress Memory Loader",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgress Memory Loader": {
+      "main": [
+        [
+          {
+            "node": "Memory Rebuild",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memory Rebuild": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        [
+          {
+            "node": "Postgres - Assistant Insert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Chicago",
+    "saveExecutionProgress": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "bIcur3RnHIwhbQrz"
+  },
+  "versionId": "1f17f3c5-beaf-40b7-bca4-a52e7b5d58bf",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8a23f4a414eab2511e2d449872efcd21e85a0679af7fc702f715235be7579732"
+  },
+  "id": "bIcur3RnHIwhbQrz",
+  "tags": []
+}
