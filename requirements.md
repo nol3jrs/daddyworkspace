@@ -60,3 +60,10 @@ Reporting: Monthly summaries, forecasts; flag overspend.
 Inputs: User data uploads or API pulls (e.g., bank feeds if secure).
 Integration: Called by Daddy Agent; tie into Personal Assistant for task ties (e.g., budget-based priorities).
 
+Met:
+- Telegram trigger
+- Dynamic memory limit
+- LLM chain
+- DB inserts
+Pending:
+- Remove n8n suffix from Telegram messages
