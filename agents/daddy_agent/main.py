@@ -2,7 +2,7 @@ import requests
 from dotenv import load_dotenv
 import os
 
-load_dotenv()  # Loads from config/.env
+load_dotenv('config/.env')  # Explicit path to your .env file
 
 def delegate_task(query):
     print(f"Processing query: {query}")  # Debug: Show input
@@ -18,11 +18,11 @@ def delegate_task(query):
 
 def run_telegram_query(query):
     bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
-    chat_id = os.getenv('TELEGRAM_CHAT_ID')
+    chat_id = os.getenv('TELEGRAM_CHAT_ID', '5805620899')  # Default to your chat ID
     print(f"Loaded bot_token: {'Set' if bot_token else 'Missing'}")  # Debug: Check env
-    print(f"Loaded chat_id: {'Set' if chat_id else 'Missing'}")
-    if not bot_token or not chat_id:
-        return "Error: Missing TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID in .env"
+    print(f"Loaded chat_id: {chat_id}")
+    if not bot_token:
+        return "Error: Missing TELEGRAM_BOT_TOKEN in .env"
     url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
     payload = {'chat_id': chat_id, 'text': query}
     try:
@@ -34,6 +34,6 @@ def run_telegram_query(query):
         return f"Error: {str(e)}"
 
 if __name__ == "__main__":
-    test_query = "Plan my budget for health tracking."
+    test_query = "What's the weather today?"  # Fallback test
     result = delegate_task(test_query)
     print(f"Final result: {result}")
