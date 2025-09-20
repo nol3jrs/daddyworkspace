@@ -5,3 +5,5 @@ config/.env
 DaddyWorkspace_base64.txt
 into
 daddyworkspace/
+agents/cio_agent/
+agents/coo_agent/
