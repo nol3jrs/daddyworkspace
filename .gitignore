@@ -1,9 +1,3 @@
-config/.env
-.DS_Store
-.venv/
-*.zip
-DaddyWorkspace_base64.txt
-into
-daddyworkspace/
-agents/cio_agent/
-agents/coo_agent/
+.env
+node_modules/
+*.log
