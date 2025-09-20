@@ -1,1 +1,6 @@
 config/.env
+.DS_Store
+.venv/
+*.zip
+DaddyWorkspace_base64.txt
+into
