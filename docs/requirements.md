@@ -1,6 +1,6 @@
 # Requirements
 ## Met
-- Public repo[](https://github.com/nol3jrs/daddyworkspace)
+- [Public repo](https://github.com/nol3jrs/daddyworkspace)
 ## Pending
 - Folder structure: src, diagrams, docs, deploy
 - Tools for future projects (e.g., Web Speech API, Grok API from https://x.ai/api)
