@@ -1,6 +1,10 @@
 import requests
 from dotenv import load_dotenv
 import os
+import sys
+
+# Add agents path to sys.path for relative imports
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 load_dotenv('config/.env')  # Explicit path to your .env file
 
@@ -8,7 +12,8 @@ def delegate_task(query):
     print(f"Processing query: {query}")  # Debug: Show input
     if 'budget' in query.lower():
         print("Routing to CFO path")
-        return "Delegated to CFO Agent: Budget planning initiated."
+        from cfo_agent.main import cfo_budget_plan  # Relative import fix
+        return cfo_budget_plan(query)
     elif 'todo' in query.lower() or 'manage' in query.lower():
         print("Routing to Datagent path")
         return "Delegated to Datagent: Todo management started."
@@ -34,6 +39,6 @@ def run_telegram_query(query):
         return f"Error: {str(e)}"
 
 if __name__ == "__main__":
-    test_query = "What's the weather today?"  # Fallback test
+    test_query = "Plan my budget for health tracking."  # Test CFO routing
     result = delegate_task(test_query)
     print(f"Final result: {result}")
