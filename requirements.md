@@ -59,3 +59,4 @@ Functionality: Monitor expenses/income; categorize (e.g., trading fees, subscrip
 Reporting: Monthly summaries, forecasts; flag overspend.
 Inputs: User data uploads or API pulls (e.g., bank feeds if secure).
 Integration: Called by Daddy Agent; tie into Personal Assistant for task ties (e.g., budget-based priorities).
+
